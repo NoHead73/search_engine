@@ -1,0 +1,17 @@
+{
+    "answers": {
+        "request001": {
+            "result": "false"
+        },
+        "request002": {
+            "docid": 1,
+            "rank": 1.0,
+            "result": "true"
+        },
+        "request003": {
+            "docid": 0,
+            "rank": 1.0,
+            "result": "true"
+        }
+    }
+}
