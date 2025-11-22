@@ -99,6 +99,7 @@ vector<string> ConverterJSON::GetTextDocuments() {
             string path = file_path;
 
             if (!fileExists(path)) {
+                std::cerr << "File not found: " << path << std::endl;
                 continue;
             }
 
@@ -165,20 +166,29 @@ void ConverterJSON::putAnswers(vector<vector<pair<int, float>>> answers) {
     json answers_json;
     answers_json["answers"] = json::object();
 
+    int max_responses = GetResponsesLimit();
+
     for (size_t i = 0; i < answers.size(); ++i) {
         string request_id = "request" + string(3 - to_string(i + 1).length(), '0') + to_string(i + 1);
 
-        if (answers[i].empty()) {
+        vector<pair<int, float>> limited_answers;
+        if (answers[i].size() > max_responses) {
+            limited_answers.assign(answers[i].begin(), answers[i].begin() + max_responses);
+        } else {
+            limited_answers = answers[i];
+        }
+
+        if (limited_answers.empty()) {
             answers_json["answers"][request_id] = {{"result", "false"}};
-        } else if (answers[i].size() == 1) {
+        } else if (limited_answers.size() == 1) {
             answers_json["answers"][request_id] = {
                 {"result", "true"},
-                {"docid", answers[i][0].first},
-                {"rank", answers[i][0].second}
+                {"docid", limited_answers[0].first},
+                {"rank", limited_answers[0].second}
             };
         } else {
             json relevance_array = json::array();
-            for (const auto& [docid, rank] : answers[i]) {
+            for (const auto& [docid, rank] : limited_answers) {
                 relevance_array.push_back({{"docid", docid}, {"rank", rank}});
             }
 

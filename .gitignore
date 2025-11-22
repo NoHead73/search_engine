@@ -1,0 +1,33 @@
+﻿# Сборки CMake
+build/
+out/
+bin/
+lib/
+*.sln
+*.vcxproj*
+*.vcxproj.filters
+x64/
+x86/
+*.dir/
+*.vcxproj.user
+
+# Файлы CLion
+.idea/
+cmake-build-*/
+*.iws
+
+# Исполняемые файлы
+*.exe
+*.out
+*.app
+
+# Логи
+*.log
+search_engine.log
+
+# Временные файлы
+*.tmp
+*.temp
+
+# Ответы
+answers.json

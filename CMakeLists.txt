@@ -1,7 +1,11 @@
-cmake_minimum_required(VERSION 3.21)
+﻿cmake_minimum_required(VERSION 3.21)
 project(search_engine)
 
 set(CMAKE_CXX_STANDARD 17)
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY /bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY /lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY /lib)
 
 enable_testing()
 
@@ -29,23 +33,33 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(json)
 
 add_executable(search_engine
-        main.cpp
-        ConverterJSON.cpp
-        InvertedIndex.cpp
-        SearchServer.cpp
-        Logger.h
+        src/main.cpp
+        src/ConverterJSON.cpp
+        src/InvertedIndex.cpp
+        src/SearchServer.cpp
 )
+
+target_include_directories(search_engine PRIVATE include)
 
 target_link_libraries(search_engine PRIVATE
         nlohmann_json::nlohmann_json
 )
 
+add_executable(test_search_engine
+        tests/test_search_engine.cpp
+        src/ConverterJSON.cpp
+        src/InvertedIndex.cpp
+        src/SearchServer.cpp
+)
+
+target_include_directories(test_search_engine PRIVATE include)
+
 if(GTest_FOUND)
-    target_link_libraries(search_engine PRIVATE GTest::gtest GTest::gtest_main GTest::gmock)
+    target_link_libraries(test_search_engine PRIVATE GTest::gtest GTest::gtest_main GTest::gmock nlohmann_json::nlohmann_json)
     include(GoogleTest)
-    gtest_discover_tests(search_engine)
+    gtest_discover_tests(test_search_engine)
 elseif(googletest_POPULATED)
-    target_link_libraries(search_engine PRIVATE gtest gtest_main gmock)
+    target_link_libraries(test_search_engine PRIVATE gtest gtest_main gmock nlohmann_json::nlohmann_json)
     include(GoogleTest)
-    gtest_discover_tests(search_engine)
+    gtest_discover_tests(test_search_engine)
 endif()
